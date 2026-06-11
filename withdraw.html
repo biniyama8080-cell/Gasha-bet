@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Withdraw</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+</div>
+
+<div class="level-card">
+    <h2>Withdraw Funds</h2>
+
+    <input type="number" id="amount" placeholder="Enter Amount">
+
+    <button onclick="withdrawMoney()">
+    Withdraw Now
+    </button>
+<button onclick="location.href='history.html'">
+History
+</button>
+    <p id="msg"></p>
+</div>
+<script>
+function withdrawMoney() {
+
+    let amount = Number(document.getElementById("amount").value);
+    let balance = Number(localStorage.getItem("balance")) || 0;
+
+    if(amount <= 0){
+        document.getElementById("msg").innerHTML =
+        "Enter valid amount";
+        return;
+    }
+
+    if(amount > balance){
+        document.getElementById("msg").innerHTML =
+        "Insufficient Balance";
+        return;
+    }
+
+    balance -= amount;
+    localStorage.setItem("balance", balance);
+
+    let history = localStorage.getItem("history") || "";
+    history += "<li>Withdraw: " + amount + " ETB</li>";
+    localStorage.setItem("history", history);
+    let notes = localStorage.getItem("notifications") || "";
+notes += "<p>💸 Withdraw: " + amount + " ETB</p>";
+localStorage.setItem("notifications", notes);
+
+    document.getElementById("msg").innerHTML =
+    "Withdrawal Successful: " + amount + " ETB";
+}
+</script>
+</div>
+
+</body>
+</html>

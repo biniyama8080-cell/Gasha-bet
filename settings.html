@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+</div>
+
+<div class="level-card">
+
+    <h2>Settings</h2>
+
+    <button onclick="changeUsername()">
+        Change Username
+    </button>
+
+    <br><br>
+
+    <button onclick="clearHistory()">
+        Clear Transaction History
+    </button>
+
+    <br><br>
+
+    <button onclick="resetBalance()">
+        Reset Balance
+    </button>
+
+    <br><br>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+
+</div>
+
+<script>
+
+function changeUsername(){
+    let newName = prompt("Enter New Username");
+
+    if(newName){
+        localStorage.setItem("username", newName);
+        alert("Username Updated");
+    }
+}
+
+function clearHistory(){
+    localStorage.removeItem("history");
+    alert("Transaction History Cleared");
+}
+
+function resetBalance(){
+    localStorage.setItem("balance", 0);
+    alert("Balance Reset");
+}
+
+function logout(){
+    localStorage.removeItem("username");
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

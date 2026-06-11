@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wallet</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+</div>
+
+<div class="level-card">
+    <h2>Wallet Balance</h2>
+    <h2>Balance: <span id="balance">0</span> </h2>
+
+<script>
+document.getElementById("balance").innerHTML =
+localStorage.getItem("balance") || 0;
+</script>
+
+
+<script>
+document.getElementById("balance").innerHTML =
+(localStorage.getItem("balance") || "0") + " ETB";
+</script>
+
+    <button onclick="location.href='deposit.html'">
+        Deposit
+    </button>
+
+    <br><br>
+
+    <button onclick="location.href='withdraw.html'">
+        Withdraw
+    </button>
+
+    <br><br>
+
+    <button onclick="location.href='history.html'">
+        Transaction History
+    </button>
+</div>
+
+<div class="bottom-nav">
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Games</a>
+    <a href="wallet.html">Wallet</a>
+    <a href="login.html">Account</a>
+</div>
+
+<script>
+function withdrawMoney() {
+
+    let amount = Number(document.getElementById("amount").value);
+
+    let balance = Number(localStorage.getItem("balance")) || 0;
+
+    if(amount <= 0){
+        document.getElementById("msg").innerHTML =
+        "Enter a valid amount";
+        return;
+    }
+
+    if(amount > balance){
+        document.getElementById("msg").innerHTML =
+        "Insufficient Balance";
+        return;
+    }
+
+    balance -= amount;
+
+    localStorage.setItem("balance", balance);
+
+    document.getElementById("msg").innerHTML =
+    "Withdrawal Successful: " + amount + " ETB";
+}
+</script>
+
+</body>
+</html>

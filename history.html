@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction History</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+</div>
+
+<div class="level-card">
+    <h2>Transaction History</h2>
+
+    <ul id="historyList"></ul>
+
+<script>
+document.getElementById("historyList").innerHTML =
+localStorage.getItem("history") || "No transactions yet";
+</script>
+</div>
+
+</body>
+</html>

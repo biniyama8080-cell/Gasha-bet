@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+</div>
+
+<div class="level-card">
+
+    <h2>My Account</h2>
+
+    <p id="user"></p>
+
+    <p>
+        <strong>Balance:</strong>
+        <span id="balance">0</span> ETB
+    </p>
+
+    <button onclick="location.href='wallet.html'">
+        Wallet
+    </button>
+
+    <button onclick="location.href='profile.html'">
+        Profile
+    </button>
+
+    <button onclick="location.href='settings.html'">
+        Settings
+    </button>
+    
+    <button onclick="location.href='leaderboard.html'">Leaderboard
+    </button>
+
+    <button onclick="logout()">
+        Logout
+    </button>
+    
+    <button onclick="location.href='notifications.html'">Notifications
+    </button>
+
+</div>
+
+<script>
+
+document.getElementById("user").innerHTML =
+"<strong>Username:</strong> " +
+(localStorage.getItem("username") || "Guest");
+
+document.getElementById("balance").innerHTML =
+localStorage.getItem("balance") || 0;
+
+function logout(){
+    localStorage.removeItem("username");
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

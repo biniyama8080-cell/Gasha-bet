@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keno</title>
+<link rel="stylesheet" href="style.CSS">
+
+<style>
+body{
+background:#0f172a;
+color:white;
+font-family:Arial,sans-serif;
+margin:0;
+padding:0;
+}
+
+.topbar{
+background:#111827;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-weight:bold;
+}
+
+.level-card{
+padding:15px;
+}
+
+#kenoBoard{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+margin-top:15px;
+}
+
+#kenoBoard button{
+width:55px;
+height:55px;
+border-radius:50%;
+font-weight:bold;
+font-size:18px;
+}
+
+#kenoBoard button:hover{
+transform:scale(1.05);
+}
+
+.selected{
+background:#22c55e !important;
+color:white !important;
+}
+
+.winner{
+background:gold !important;
+color:black !important;
+box-shadow:0 0 15px gold;
+transform:scale(1.1);
+}
+
+.bet-box input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+margin-bottom:10px;
+font-size:16px;
+}
+
+.play-btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+.result{
+margin-top:15px;
+padding:10px;
+background:#111827;
+border-radius:10px;
+text-align:center;
+}
+
+.promo{
+background:#111827;
+padding:15px;
+border-radius:12px;
+margin:15px 0;
+}
+.promo{
+color:white;
+}
+
+.promo p{
+color:white;
+}
+
+#lastDraw,
+#recentResults,
+#drawnNumbers{
+background:#111827;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+word-wrap:break-word;
+}
+#jackpot{
+background:linear-gradient(45deg,#ffd700,#ffb300);
+color:black;
+font-size:24px;
+font-weight:bold;
+padding:15px;
+border-radius:12px;
+text-align:center;
+margin-bottom:15px;
+box-shadow:0 0 15px gold;
+}
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+
+#jackpot{
+animation:pulse 2s infinite;
+}
+h2,h3{
+color:#facc15;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div class="logo">GASHA.BET</div>
+
+<div class="wallet">
+Balance:
+<span id="balance">0</span> ETB
+</div>
+</div>
+
+<div class="level-card">
+
+<h2>Keno</h2>
+
+<p>Select up to 10 numbers</p>
+
+<p>Selected:
+<span id="selectedCount">0</span>/10
+</p>
+
+<p>Your Numbers:
+<span id="selectedNumbers"></span>
+</p>
+
+<div class="promo">
+<h3>Payout Table</h3>
+<p>8+ Matches = x10</p>
+<p>6-7 Matches = x3</p>
+<p>4-5 Matches = x1.5</p>
+<p>0-3 Matches = Lose</p>
+</div>
+
+<h3>Choose Your Lucky Numbers</h3>
+
+<div id="kenoBoard"></div>
+
+<h3>Last Draw</h3>
+<div id="lastDraw">No draw yet</div>
+
+<h3>Recent Results</h3>
+<div id="recentResults"></div>
+
+<h3>🎰 Jackpot</h3>
+<div id="jackpot">10000 ETB</div>
+<h3>📊 Statistics</h3>
+
+<div class="promo">
+<p>Games Played:
+<span id="gamesPlayed">0</span></p>
+
+<p>Wins:
+<span id="wins">0</span></p>
+
+<p>Losses:
+<span id="losses">0</span></p>
+
+<p>Biggest Win:
+<span id="biggestWin">0</span> ETB</p>
+</div>
+<p>Win Rate:
+<span id="winRate">0</span>%</p>
+
+<p>
+Matches:
+<span id="matchCount">0</span>
+</p>
+
+<div class="bet-box">
+
+<input type="number"
+id="betAmount"
+placeholder="Enter Bet Amount">
+
+<button class="play-btn"
+onclick="playKeno()">
+Play Keno
+</button>
+
+</div>
+
+<div class="result" id="result"></div>
+
+<div id="drawnNumbers"></div>
+
+</div>
+
+<script>
+
+document.getElementById("balance").innerHTML =
+localStorage.getItem("balance") || 0;
+
+let selected = [];
+
+let jackpot =
+Number(localStorage.getItem("jackpot")) || 10000;
+let gamesPlayed =
+Number(localStorage.getItem("gamesPlayed")) || 0;
+
+let wins =
+Number(localStorage.getItem("wins")) || 0;
+
+let losses =
+Number(localStorage.getItem("losses")) || 0;
+
+let biggestWin =
+Number(localStorage.getItem("biggestWin")) || 0;
+document.getElementById("jackpot").innerHTML =
+jackpot + " ETB";
+
+document.getElementById("gamesPlayed").innerHTML =
+gamesPlayed;
+
+document.getElementById("wins").innerHTML =
+wins;
+
+document.getElementById("losses").innerHTML =
+losses;
+
+document.getElementById("biggestWin").innerHTML =
+biggestWin;
+let rate = 0;
+
+if(gamesPlayed > 0){
+rate = Math.round((wins / gamesPlayed) * 100);
+}
+
+document.getElementById("winRate").innerHTML =
+rate;
+
+for(let i=1;i<=40;i++){
+
+let btn = document.createElement("button");
+
+btn.innerHTML = i;
+
+btn.onclick = function(){
+
+if(selected.includes(i)){
+
+selected = selected.filter(n => n !== i);
+
+btn.classList.remove("selected");
+
+}else{
+
+if(selected.length >= 10){
+alert("Maximum 10 numbers");
+return;
+}
+
+selected.push(i);
+
+btn.classList.add("selected");
+}
+
+document.getElementById("selectedCount").innerHTML =
+selected.length;
+
+document.getElementById("selectedNumbers").innerHTML =
+selected.join(", ");
+};
+
+document.getElementById("kenoBoard").appendChild(btn);
+}
+
+function playKeno(){
+
+let bet =
+Number(document.getElementById("betAmount").value);
+
+let balance =
+Number(localStorage.getItem("balance")) || 0;
+
+if(selected.length === 0){
+alert("Select numbers");
+return;
+}
+
+if(bet <= 0){
+alert("Enter bet amount");
+return;
+}
+
+if(bet > balance){
+alert("Insufficient Balance");
+return;
+}
+
+let count = 5;
+
+document.getElementById("drawnNumbers").innerHTML =
+"<h3>Countdown: " + count + "</h3>";
+
+let countdown = setInterval(function(){
+
+count--;
+document.getElementById("tickSound").play();
+
+document.getElementById("drawnNumbers").innerHTML =
+"<h3>Countdown: " + count + "</h3>";
+
+if(count <= 0){
+
+clearInterval(countdown);
+
+startDraw(bet,balance);
+
+}
+
+},1000);
+
+}
+
+function startDraw(bet,balance){
+
+let draw = [];
+
+document.getElementById("drawnNumbers").innerHTML =
+"<h3>Lucky Numbers</h3>";
+let results =
+JSON.parse(localStorage.getItem("kenoResults")) || [];
+
+results.unshift(draw.join(", "));
+
+if(results.length > 10){
+results.pop();
+}
+
+localStorage.setItem(
+"kenoResults",
+JSON.stringify(results)
+);
+
+showResults();
+
+let drawInterval = setInterval(function(){
+
+let n = Math.floor(Math.random()*40)+1;
+
+if(!draw.includes(n)){
+
+draw.push(n);
+document.getElementById("drawSound").play();
+
+document.getElementById("drawnNumbers").innerHTML =
+"<h3>Lucky Numbers</h3>" +
+draw.join(" - ");
+
+}
+
+if(draw.length >= 10){
+
+clearInterval(drawInterval);
+
+finishGame(draw,bet,balance);
+
+}
+
+},500);
+
+}
+
+function finishGame(draw,bet,balance){
+
+let matches =
+selected.filter(n => draw.includes(n)).length;
+if(matches == 10){
+
+balance += jackpot;
+document.getElementById("jackpotSound").play();
+alert("🎉 JACKPOT WON!\n" +
+jackpot + " ETB");
+
+jackpot = 10000;
+
+localStorage.setItem("jackpot", jackpot);
+
+document.getElementById("jackpot").innerHTML =
+jackpot + " ETB";
+
+}
+
+document.getElementById("matchCount").innerHTML =
+matches;
+
+document.getElementById("lastDraw").innerHTML =
+draw.join(", ");
+document.querySelectorAll("#kenoBoard button")
+.forEach(btn => {
+
+let num = Number(btn.innerHTML);
+
+if(draw.includes(num)){
+btn.classList.add("winner");
+}
+
+});
+
+let prize = 0;
+
+if(matches >= 8){
+prize = bet * 10;
+}
+else if(matches >= 6){
+prize = bet * 3;
+}
+else if(matches >= 4){
+prize = Math.floor(bet * 1.5);
+}
+
+balance -= bet;
+balance += prize;
+jackpot += Math.floor(bet * 0.1);
+
+localStorage.setItem("jackpot", jackpot);
+
+document.getElementById("jackpot").innerHTML =
+jackpot + " ETB";
+
+localStorage.setItem("balance", balance);
+
+gamesPlayed++;
+
+if(prize > 0){
+wins++;
+}else{
+losses++;
+}
+
+if(prize > biggestWin){
+biggestWin = prize;
+}
+
+localStorage.setItem("gamesPlayed", gamesPlayed);
+localStorage.setItem("wins", wins);
+localStorage.setItem("losses", losses);
+localStorage.setItem("biggestWin", biggestWin);
+
+document.getElementById("gamesPlayed").innerHTML =
+gamesPlayed;
+
+document.getElementById("wins").innerHTML =
+wins;
+
+document.getElementById("losses").innerHTML =
+losses;
+
+document.getElementById("biggestWin").innerHTML =
+biggestWin;
+
+document.getElementById("balance").innerHTML =
+balance + " ETB";
+
+if(prize > 0){
+  document.getElementById("winSound").play();
+
+document.getElementById("result").innerHTML =
+"🎉 Matches: " + matches +
+"<br>Won: " + prize + " ETB";
+
+}else{
+
+document.getElementById("result").innerHTML =
+"❌ Matches: " + matches +
+"<br>Lost: " + bet + " ETB";
+
+}
+
+setTimeout(function(){
+
+selected = [];
+
+document.querySelectorAll("#kenoBoard button")
+.forEach(btn => {
+btn.classList.remove("selected");
+});
+
+document.getElementById("selectedCount").innerHTML = "0";
+document.getElementById("selectedNumbers").innerHTML = "";
+
+},3000);
+
+}
+function showResults(){
+
+let results =
+JSON.parse(localStorage.getItem("kenoResults")) || [];
+
+let html = "";
+
+results.forEach(function(r){
+html += "<p>" + r + "</p>";
+});
+
+document.getElementById("recentResults").innerHTML =
+html;
+
+}
+showResults();
+</script>
+<audio id="tickSound">
+<source src="tick.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="drawSound">
+<source src="draw.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="winSound">
+<source src="win.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="jackpotSound">
+<source src="jackpot.mp3" type="audio/mpeg">
+</audio>
+</body>
+</html>

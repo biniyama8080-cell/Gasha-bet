@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Profile</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+</div>
+
+<div class="level-card" style="text-align:center;">
+
+    <img src="images/profile.png"
+         width="100"
+         height="100"
+         style="border-radius:50%;">
+
+    <h2 id="username">User</h2>
+
+    <p>💰 Balance: <span id="balance">0</span> ETB</p>
+
+    <p>⭐ Level: 0</p>
+
+    <p>🎁 Cashback Member</p>
+
+    <button onclick="location.href='wallet.html'">
+        Wallet
+    </button>
+
+    <br><br>
+
+    <button onclick="location.href='history.html'">
+        Transaction History
+    </button>
+
+    <br><br>
+
+    <button onclick="location.href='account.html'">
+        Back
+    </button>
+
+</div>
+
+<script>
+document.getElementById("username").innerHTML =
+localStorage.getItem("username") || "Guest";
+
+document.getElementById("balance").innerHTML =
+localStorage.getItem("balance") || 0;
+</script>
+
+</body>
+</html>
