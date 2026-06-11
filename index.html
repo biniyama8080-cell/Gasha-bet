@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gasha Bet</title>
+<link rel="stylesheet" href="style.CSS">
+</head>
+<body>
+<div class="topbar">
+    <div class="logo">GASHA.BET</div>
+
+    <div class="top-right">
+        <div class="wallet">
+    <span id="topBalance">0</span> ETB
+</div>
+        <div class="deposit" onclick="location.href='deposit.html'">+</div>
+    </div
+    <div class="top-icon">🔔</div>
+    <div class="notify">
+🔔
+<span class="badge">3</span>
+</div>
+<div class="menu">
+    <a href="index.html">🏠<br>Home</a>
+    <a href="#">🏆<br>Sports</a>
+    <a href="dashboard.html">🎮<br>Games</a>
+    <a href="dashboard.html">✈️<br>Aviator</a>
+    <a href="keno.html">⚡<br>Keno</a>
+</div>
+<div id="sideMenu" class="side-menu">
+    <a href="account.html">Account</a>
+    <a href="wallet.html">Wallet</a>
+    <a href="history.html">History</a>
+    <a href="settings.html">Settings</a>
+    <a href="login.html">Logout</a>
+</div>
+</div>
+<script>
+document.getElementById("topBalance").innerHTML =
+localStorage.getItem("balance") || 0;
+</script>
+
+<div class="banner">
+🎁 Deposit Bonus Available
+</div>
+<div class="banner">
+🚀 FEATURED GAME: KENO — Win up to 10x your bet!
+</div>
+</div>
+
+<h2 class="section-title">🔥HOT GAMES🔥</h2>
+<h3 id="levelText">🏆 Level 1</h3>
+<p>252 Points</p>
+<div class="mini-card">
+🎯 Daily Mission: Play 5 Games (+20 Points)
+</div>
+
+<div class="mini-card">
+🔥 10% Cashback Every Sunday
+</div>
+<div class="stats-card">
+  <div>👥<br>1245<br>Online</div>
+  <div>🏆<br>342<br>Winners</div>
+  <div>🎰<br>15000<br>Jackpot</div>
+</div>
+</div>
+<button onclick="claimBonus()">🎁 Claim Daily Bonus</button>
+<p id="bonusMsg"></p>
+
+</div>
+
+<div class="games">
+
+<div class="game-card">
+<img src="images/keno.jpg">
+<h3>🎯 Keno</h3>
+<button onclick="location.href='keno.html'">Play Now</button>
+</div>
+
+<div class="game-card">
+<img src="images/aviator.jpg">
+<h3>✈️ Aviator</h3>
+<button onclick="location.href='dashboard.html'">Play Now</button>
+</div>
+
+</div>
+</div>
+
+<div class="game-card">
+<h3>🎯 Keno</h3>
+<button onclick="location.href='keno.html'">
+Play Now
+</button>
+</div>
+
+</div>
+
+<div class="games">
+  
+  <div class="game-card">
+    <img src="images/keno.jpg">
+    <h3>Keno</h3>
+    <button onclick="location.href='keno.html'">
+        Play
+    </button>
+</div>
+
+<div class="game-card">
+<img src="images/aviator.jpg">
+<h3>Aviator</h3>
+<button onclick="location.href='dashboard.html'">Play</button>
+</div>
+
+<div class="game-card">
+<img src="images/spaceman.jpg">
+<h3>Spaceman</h3>
+<button>Play</button>
+</div>
+
+<div class="game-card">
+<img src="images/crash.jpg">
+<h3>Crash</h3>
+<button>Play</button>
+</div>
+
+<div class="game-card">
+<img src="images/rocket.jpg">
+<h3>Rocket</h3>
+<button>Play</button>
+</div>
+div class="promo">
+<h3>👥 Invite Friends</h3>
+
+<p>Earn 10 ETB for every referral.</p>
+
+<button onclick="copyReferral()">
+Copy Referral Link
+</button>
+<div class="bottom-nav">
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Games</a>
+    <a href="wallet.html">Wallet</a>
+    <a href="account.html">Account</a>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+document.getElementById("topBalance").innerHTML =
+localStorage.getItem("balance") || 0;
+
+function claimBonus() {
+    let claimed = localStorage.getItem("bonusClaimed");
+
+    if(claimed === "yes"){
+        document.getElementById("bonusMsg").innerHTML =
+        "Bonus already claimed today";
+        return;
+        let notes = localStorage.getItem("notifications") || "";
+notes += "<p>🎁 Daily Bonus +5 ETB</p>";
+localStorage.setItem("notifications", notes);
+    }
+
+    let balance = Number(localStorage.getItem("balance")) || 0;
+    balance += 5;
+
+    localStorage.setItem("balance", balance);
+    localStorage.setItem("bonusClaimed", "yes");
+
+    document.getElementById("bonusMsg").innerHTML =
+    "Bonus claimed! +5 ETB";
+
+    addNotification("Daily Bonus +5 ETB");
+}
+
+function toggleMenu() {
+    var menu = document.getElementById("sideMenu");
+
+    if(menu.style.display === "block"){
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+}
+
+function addNotification(text){
+    let notes = localStorage.getItem("notifications") || "";
+    notes += "<p>" + text + "</p>";
+    localStorage.setItem("notifications", notes);
+}
+
+function showNotifications(){
+    let notes = localStorage.getItem("notifications") || "No notifications";
+
+    document.getElementById("notificationList").innerHTML = notes;
+    document.getElementById("notifications").style.display = "block";
+}
+</script>
+
+
+<script>
+function updateLevel() {
+ let points = Number(localStorage.getItem("points")) || 0;
+ document.getElementById("points").innerHTML = points;
+
+ let level = 0;
+ if(points >= 100) level = 1;
+ if(points >= 500) level = 2;
+ if(points >= 1000) level = 3;
+
+ document.getElementById("levelText").innerHTML =
+ "Level " + level;
+}
+
+updateLevel();
+setInterval(function(){
+
+let online =
+1000 + Math.floor(Math.random()*500);
+
+let winners =
+300 + Math.floor(Math.random()*100);
+
+document.getElementById("onlinePlayers").innerHTML =
+online;
+
+document.getElementById("todayWinners").innerHTML =
+winners;
+
+},5000);
+</script>
+</body>
+</html>

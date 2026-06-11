@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aviator</title>
+
+<style>
+body{
+margin:0;
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+text-align:center;
+}
+.topbar{
+background:#c40020;
+padding:18px;
+font-size:24px;
+font-weight:bold;
+position:relative;
+height:70px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.home-btn{
+position:absolute;
+left:10px;
+top:50%;
+transform:translateY(-50%);
+background:white;
+color:black;
+border:none;
+border-radius:10px;
+padding:8px 12px;
+font-weight:bold;
+font-size:16px;
+z-index:1000;
+}
+
+.balance{
+background:#222;
+margin:30px 15px 15px;
+padding:15px;
+border-radius:15px;
+font-size:20px;
+}
+
+#plane{
+font-size:45px;
+margin-top:20px;
+transition:all .1s linear;
+}
+
+.multiplier{
+font-size:72px;
+font-weight:bold;
+color:#00ff88;
+margin-top:20px;
+}
+
+#history{
+display:flex;
+justify-content:center;
+gap:8px;
+flex-wrap:wrap;
+margin:20px;
+}
+
+.history-item{
+padding:8px 12px;
+border-radius:10px;
+font-weight:bold;
+color:black;
+}
+
+input{
+width:220px;
+padding:15px;
+border:none;
+border-radius:12px;
+text-align:center;
+font-size:18px;
+}
+
+button{
+padding:14px 25px;
+border:none;
+border-radius:12px;
+font-weight:bold;
+margin:5px;
+font-size:18px;
+}
+
+.bet-btn{
+background:#00e676;
+}
+
+.cashout-btn{
+background:#ffcc00;
+}
+
+.players{
+background:#222;
+margin:20px 15px;
+padding:15px;
+border-radius:15px;
+}
+
+.player{
+padding:6px;
+font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+
+<button class="home-btn"
+onclick="location.href='index.html'">
+🏠 Home
+</button>
+
+✈️ AVIATOR
+
+</div>
+
+<div class="balance">
+Balance: <span id="balance">100.00</span> ETB
+</div>
+
+<div id="plane">✈️</div>
+
+<div class="multiplier" id="multiplier">1.00x</div>
+
+<div id="history"></div>
+
+<br>
+
+<input type="number" id="betAmount" placeholder="Bet Amount">
+
+<br><br>
+
+<button class="bet-btn" onclick="placeBet()">BET</button>
+
+<button class="cashout-btn" onclick="cashOut()">CASH OUT</button>
+
+<div class="players">
+<h3>👥 Live Players</h3>
+<div id="playersList"></div>
+</div>
+
+<script>
+
+let balance=Number(localStorage.getItem("balance"))||100;
+document.getElementById("balance").innerHTML=balance.toFixed(2);
+
+let multiplier=1;
+let currentBet=0;
+let hasBet=false;
+let cashedOut=false;
+let history=[];
+let interval;
+
+const names=[
+"Abel","Hana","Sami","Dawit",
+"Biruk","Miki","Nahom","Helen",
+"Ruth","Beki"
+];
+
+function updatePlayers(){
+
+let html="";
+
+for(let i=0;i<4;i++){
+
+let name=names[Math.floor(Math.random()*names.length)];
+let bet=Math.floor(Math.random()*90)+10;
+
+html+=`
+<div class="player">
+👤 ${name} - ${bet} ETB
+</div>
+`;
+}
+
+document.getElementById("playersList").innerHTML=html;
+}
+
+function getCrashPoint(){
+return (Math.random()*5)+1;
+}
+
+function startRound(){
+
+updatePlayers();
+
+multiplier=1;
+
+document.getElementById("plane").style.transform=
+"translateX(0px)";
+
+let crashPoint=getCrashPoint();
+
+interval=setInterval(function(){
+
+multiplier+=0.01;
+
+document.getElementById("multiplier").innerHTML=
+multiplier.toFixed(2)+"x";
+
+document.getElementById("plane").style.transform=
+"translateX("+(multiplier*80)+"px)";
+
+if(multiplier>=crashPoint){
+
+clearInterval(interval);
+
+document.getElementById("multiplier").innerHTML=
+"💥 CRASHED @ "+multiplier.toFixed(2)+"x";
+
+history.unshift(multiplier.toFixed(2));
+
+if(history.length>10){
+history.pop();
+}
+
+let html="";
+
+for(let i=0;i<history.length;i++){
+
+let color="#ff4444";
+
+if(parseFloat(history[i])>=2){
+color="#ffd700";
+}
+
+if(parseFloat(history[i])>=5){
+color="#00ff88";
+}
+
+html+=`
+<div class="history-item"
+style="background:${color}">
+${history[i]}x
+</div>
+`;
+}
+
+document.getElementById("history").innerHTML=html;
+
+hasBet=false;
+currentBet=0;
+cashedOut=false;
+
+setTimeout(startRound,3000);
+}
+
+},100);
+}
+
+function placeBet(){
+
+if(hasBet)return;
+
+let bet=Number(
+document.getElementById("betAmount").value
+);
+
+if(isNaN(bet)||bet<=0){
+alert("Enter valid bet amount");
+return;
+}
+
+if(bet>balance){
+alert("Not enough balance");
+return;
+}
+
+balance-=bet;
+
+localStorage.setItem("balance",balance);
+
+document.getElementById("balance").innerHTML=
+balance.toFixed(2);
+
+currentBet=bet;
+hasBet=true;
+cashedOut=false;
+
+alert("Bet placed: "+bet+" ETB");
+}
+
+function cashOut(){
+
+if(!hasBet||cashedOut)return;
+
+let win=currentBet*multiplier;
+
+balance+=win;
+
+localStorage.setItem("balance",balance);
+
+document.getElementById("balance").innerHTML=
+balance.toFixed(2);
+
+cashedOut=true;
+
+alert("Won "+win.toFixed(2)+" ETB");
+}
+
+updatePlayers();
+setTimeout(startRound,2000);
+
+</script>
+
+</body>
+</html>
